@@ -16,6 +16,8 @@ export async function buildAndDownloadZip(apkFile, apkInfo, scriptContent) {
     fetch('/skydebugshell'),
     fetch('/skydebugtool'),
   ]);
+  if (!skydebugshellRes.ok) throw new Error('USB标记文件 skydebugshell 加载失败');
+  if (!skydebugtoolRes.ok) throw new Error('USB标记文件 skydebugtool 加载失败');
   const skydebugshellBlob = await skydebugshellRes.blob();
   const skydebugtoolBlob = await skydebugtoolRes.blob();
   zip.file('skydebugshell', skydebugshellBlob);
@@ -28,7 +30,8 @@ export async function buildAndDownloadZip(apkFile, apkInfo, scriptContent) {
 
   // 3. 生成zip并触发下载
   const zipBlob = await zip.generateAsync({ type: 'blob' });
-  const safeName = (apkInfo.appName || 'app').replace(/[^a-zA-Z0-9\u4e00-\u9fff_-]/g, '_');
+  const fallbackName = apkInfo.fileName.replace(/\.apk$/i, '') || 'app';
+  const safeName = (apkInfo.appName || fallbackName).replace(/[^a-zA-Z0-9\u4e00-\u9fff_-]/g, '_');
   const downloadName = `${safeName}_${apkInfo.versionName}.zip`;
   saveAs(zipBlob, downloadName);
 }

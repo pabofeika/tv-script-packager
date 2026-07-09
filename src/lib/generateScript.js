@@ -1,37 +1,5 @@
-// 脚本模板内容（构建时由Vite内联处理）
-const TEMPLATE = `#!/system/bin/sh
-
-##################################################ensure usb
-# ensure usb or sdcard, and find skydebugtool file
-USB_ALL_PATH=$(cat /proc/mounts | grep -E 'vfat|ntfs|exfat' | busybox awk 'NR==1{print $2}')
-for usb in $USB_ALL_PATH
-do
-	if [ -f "$usb/skydebugtool" ]; then
-		USBPATH=$usb
-		echo "usb path is $USBPATH"
-	fi
-done
-if [ "$USBPATH" == "" ];then
-	echo "Please insert USB disk"
-	return 0
-fi
-##################################################
-enable_overlayfs.sh;remount;mount -o rw,remount /factory;mount -o rw,remount /;mount -o rw,remount /vendor;mount -o rw,remount /system
-
-milan_version=$(pm dump {{PACKAGE_NAME}} | grep "versionName" | busybox awk -F "=" '{print $2}')
-
-if [ "$milan_version" != "{{VERSION_NAME}}" ];then
-	echo "先卸载再删除"
-	pm uninstall {{PACKAGE_NAME}}
-	rm -rf $(pm path {{PACKAGE_NAME}} | busybox awk -F ":" '{print $2}')
-	reboot
-elif [ -z "$milan_version" ];then
-	pm install -r -t $USBPATH/SkyBusinessFile/{{APK_FILENAME}}
-fi
-
-
-##################################################
-`;
+// 通过 Vite ?raw 导入脚本模板（构建时内联为字符串）
+import TEMPLATE from '../templates/SkyBusiness.sh.txt?raw';
 
 /**
  * 生成替换变量后的SkyBusiness.sh脚本内容
