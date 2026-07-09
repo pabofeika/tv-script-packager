@@ -12,9 +12,10 @@ export async function buildAndDownloadZip(apkFile, apkInfo, scriptContent) {
   const zip = new JSZip();
 
   // 1. 添加USB标记文件（从public/目录加载）
+  const baseUrl = import.meta.env.BASE_URL;
   const [skydebugshellRes, skydebugtoolRes] = await Promise.all([
-    fetch('/skydebugshell'),
-    fetch('/skydebugtool'),
+    fetch(`${baseUrl}skydebugshell`),
+    fetch(`${baseUrl}skydebugtool`),
   ]);
   if (!skydebugshellRes.ok) throw new Error('USB标记文件 skydebugshell 加载失败');
   if (!skydebugtoolRes.ok) throw new Error('USB标记文件 skydebugtool 加载失败');
