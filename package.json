@@ -13,7 +13,6 @@
     "deploy": "gh-pages -d dist"
   },
   "dependencies": {
-    "app-info-parser": "^1.1.6",
     "file-saver": "^2.0.5",
     "jszip": "^3.10.1",
     "react": "^19.2.7",
